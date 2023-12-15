@@ -4,7 +4,7 @@ import Swal from 'sweetalert2';
 import { doc, setDoc } from "firebase/firestore"; 
 import { db } from '../../config/firestore'
 
-const Edit = ({ orders, selectedOrder, setOrders, setIsEditing, getOrders }) => {
+const Edit = ({ orders, selectedOrder, setOrders, setIsEditing }) => {
   const id = selectedOrder.id;
 
   const [clientName, setClientName] = useState(selectedOrder.clientName);
@@ -32,11 +32,10 @@ const Edit = ({ orders, selectedOrder, setOrders, setIsEditing, getOrders }) => 
 
     await setDoc(doc(db, "orders", id), {
       ...order
-    });
+    })
 
     setOrders(orders);
     setIsEditing(false);
-    getOrders()
 
     Swal.fire({
       icon: 'success',

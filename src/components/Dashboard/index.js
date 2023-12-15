@@ -6,7 +6,7 @@ import Table from './Table';
 import Add from './Add';
 import Edit from './Edit';
 
-import { collection, getDocs, doc, deleteDoc } from "firebase/firestore";
+import { collection, doc, deleteDoc, onSnapshot } from "firebase/firestore";
 import { db } from '../../config/firestore'
 
 const Dashboard = ({ setIsAuthenticated }) => {
@@ -15,15 +15,26 @@ const Dashboard = ({ setIsAuthenticated }) => {
   const [isAdding, setIsAdding] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
 
-  const getOrders = async () => {
-    const querySnapshot = await getDocs(collection(db, "orders"));
-    const orders = querySnapshot.docs.map(doc => ({id: doc.id, ...doc.data()}))
-    setOrders(orders)
-  }
+
+
+
+  // const getOrders = async () => {
+  //   const querySnapshot = await getDocs(collection(db, "orders"));
+  //   const orders = querySnapshot.docs.map(doc => ({id: doc.id, ...doc.data()}))
+  //   setOrders(orders)
+  // }
 
   useEffect(() => {
-    getOrders()
+    const unsub = onSnapshot(collection(db, "orders"), (collection) => {
+      const orders = collection.docs.map(doc => ({ id: doc.id, ...doc.data() }))
+      setOrders(orders)
+    });
+
+    return () => {
+      unsub()
+    }
   }, []);
+  
 
   const handleEdit = id => {
     const [order] = orders.filter(order => order.id === id);
@@ -80,7 +91,6 @@ const Dashboard = ({ setIsAuthenticated }) => {
           orders={orders}
           setOrders={setOrders}
           setIsAdding={setIsAdding}
-          getOrders={getOrders}
         />
       )}
       {isEditing && (
@@ -89,7 +99,6 @@ const Dashboard = ({ setIsAuthenticated }) => {
           selectedOrder={selectedOrder}
           setOrders={setOrders}
           setIsEditing={setIsEditing}
-          getOrders={getOrders}
         />
       )}
     </div>

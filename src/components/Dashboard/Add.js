@@ -5,7 +5,7 @@ import { collection, addDoc } from "firebase/firestore"
 import { db } from '../../config/firestore'
 
 
-const Add = ({ orders, setOrders, setIsAdding, getOrders }) => {
+const Add = ({ orders, setOrders, setIsAdding }) => {
   const [clientName, setClientName] = useState('')
   const [orderText, setOrderText] = useState('')
   const [deliveryType, setDeliveryType] = useState('pickup')
@@ -40,7 +40,6 @@ const Add = ({ orders, setOrders, setIsAdding, getOrders }) => {
 
     setOrders(orders)
     setIsAdding(false)
-    getOrders()
 
     Swal.fire({
       icon: 'success',
