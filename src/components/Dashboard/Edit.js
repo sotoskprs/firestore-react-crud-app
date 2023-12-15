@@ -4,19 +4,17 @@ import Swal from 'sweetalert2';
 import { doc, setDoc } from "firebase/firestore"; 
 import { db } from '../../config/firestore'
 
-const Edit = ({ employees, selectedEmployee, setEmployees, setIsEditing, getEmployees }) => {
-  const id = selectedEmployee.id;
+const Edit = ({ orders, selectedOrder, setOrders, setIsEditing, getOrders }) => {
+  const id = selectedOrder.id;
 
-  const [firstName, setFirstName] = useState(selectedEmployee.firstName);
-  const [lastName, setLastName] = useState(selectedEmployee.lastName);
-  const [email, setEmail] = useState(selectedEmployee.email);
-  const [salary, setSalary] = useState(selectedEmployee.salary);
-  const [date, setDate] = useState(selectedEmployee.date);
+  const [clientName, setClientName] = useState(selectedOrder.clientName);
+  const [orderText, setOrderText] = useState(selectedOrder.orderText);
+  const [deliveryType, setDeliveryType] = useState(selectedOrder.deliveryType);
 
   const handleUpdate = async (e) => {
     e.preventDefault();
 
-    if (!firstName || !lastName || !email || !salary || !date) {
+    if (!clientName || !orderText || !deliveryType) {
       return Swal.fire({
         icon: 'error',
         title: 'Error!',
@@ -25,27 +23,25 @@ const Edit = ({ employees, selectedEmployee, setEmployees, setIsEditing, getEmpl
       });
     }
 
-    const employee = {
+    const order = {
       id,
-      firstName,
-      lastName,
-      email,
-      salary,
-      date,
+      clientName,
+      orderText,
+      deliveryType,
     };
 
-    await setDoc(doc(db, "employees", id), {
-      ...employee
+    await setDoc(doc(db, "orders", id), {
+      ...order
     });
 
-    setEmployees(employees);
+    setOrders(orders);
     setIsEditing(false);
-    getEmployees()
+    getOrders()
 
     Swal.fire({
       icon: 'success',
       title: 'Updated!',
-      text: `${employee.firstName} ${employee.lastName}'s data has been updated.`,
+      text: `${order.firstName} ${order.lastName}'s data has been updated.`,
       showConfirmButton: false,
       timer: 1500,
     });
@@ -54,54 +50,43 @@ const Edit = ({ employees, selectedEmployee, setEmployees, setIsEditing, getEmpl
   return (
     <div className="small-container">
       <form onSubmit={handleUpdate}>
-        <h1>Edit Employee</h1>
-        <label htmlFor="firstName">First Name</label>
+      <h1>Επεξεργασία παραγγελίας</h1>
+        <label htmlFor="clientName">Όνομα</label>
         <input
-          id="firstName"
+          id="clientName"
           type="text"
-          name="firstName"
-          value={firstName}
-          onChange={e => setFirstName(e.target.value)}
+          name="clientName"
+          value={clientName}
+          onChange={e => setClientName(e.target.value)}
+          placeholder="Το όνομά σας"
         />
-        <label htmlFor="lastName">Last Name</label>
+        <label htmlFor="orderText">Παραγγελία</label>
         <input
-          id="lastName"
+          id="orderText"
           type="text"
-          name="lastName"
-          value={lastName}
-          onChange={e => setLastName(e.target.value)}
+          name="orderText"
+          value={orderText}
+          onChange={e => setOrderText(e.target.value)}
+          placeholder="πχ ελληνικό διπλό μέτριο"
         />
-        <label htmlFor="email">Email</label>
-        <input
-          id="email"
-          type="email"
-          name="email"
-          value={email}
-          onChange={e => setEmail(e.target.value)}
-        />
-        <label htmlFor="salary">Salary ($)</label>
-        <input
-          id="salary"
-          type="number"
-          name="salary"
-          value={salary}
-          onChange={e => setSalary(e.target.value)}
-        />
-        <label htmlFor="date">Date</label>
-        <input
-          id="date"
-          type="date"
-          name="date"
-          value={date}
-          onChange={e => setDate(e.target.value)}
-        />
+        <div style={{margin: "1rem 0 0.5rem"}}>
+          <select
+            id='deliveryType'
+            name='deliveryType'
+            value={deliveryType}
+            onChange={e => setDeliveryType(e.target.value)}
+          >
+            <option value="pickup">Θα παραλάβω εγώ</option>
+            <option value="delivery">Παράδοση στο γραφείο</option>
+          </select>
+        </div>
         <div style={{ marginTop: '30px' }}>
-          <input type="submit" value="Update" />
+          <input type="submit" value="Αποστολή" />
           <input
             style={{ marginLeft: '12px' }}
             className="muted-button"
             type="button"
-            value="Cancel"
+            value="Ακύρωση"
             onClick={() => setIsEditing(false)}
           />
         </div>

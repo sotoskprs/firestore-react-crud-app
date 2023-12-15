@@ -10,25 +10,25 @@ import { collection, getDocs, doc, deleteDoc } from "firebase/firestore";
 import { db } from '../../config/firestore'
 
 const Dashboard = ({ setIsAuthenticated }) => {
-  const [employees, setEmployees] = useState();
-  const [selectedEmployee, setSelectedEmployee] = useState(null);
+  const [orders, setOrders] = useState();
+  const [selectedOrder, setSelectedOrder] = useState(null);
   const [isAdding, setIsAdding] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
 
-  const getEmployees = async () => {
-    const querySnapshot = await getDocs(collection(db, "employees"));
-    const employees = querySnapshot.docs.map(doc => ({id: doc.id, ...doc.data()}))
-    setEmployees(employees)
+  const getOrders = async () => {
+    const querySnapshot = await getDocs(collection(db, "orders"));
+    const orders = querySnapshot.docs.map(doc => ({id: doc.id, ...doc.data()}))
+    setOrders(orders)
   }
 
   useEffect(() => {
-    getEmployees()
+    getOrders()
   }, []);
 
   const handleEdit = id => {
-    const [employee] = employees.filter(employee => employee.id === id);
+    const [order] = orders.filter(order => order.id === id);
 
-    setSelectedEmployee(employee);
+    setSelectedOrder(order);
     setIsEditing(true);
   };
 
@@ -42,20 +42,20 @@ const Dashboard = ({ setIsAuthenticated }) => {
       cancelButtonText: 'No, cancel!',
     }).then(result => {
       if (result.value) {
-        const [employee] = employees.filter(employee => employee.id === id);
+        const [order] = orders.filter(order => order.id === id);
 
-        deleteDoc(doc(db, "employees", id));
+        deleteDoc(doc(db, "orders", id));
 
         Swal.fire({
           icon: 'success',
           title: 'Deleted!',
-          text: `${employee.firstName} ${employee.lastName}'s data has been deleted.`,
+          text: `${order.firstName} ${order.lastName}'s data has been deleted.`,
           showConfirmButton: false,
           timer: 1500,
         });
 
-        const employeesCopy = employees.filter(employee => employee.id !== id);
-        setEmployees(employeesCopy);
+        const ordersCopy = orders.filter(order => order.id !== id);
+        setOrders(ordersCopy);
       }
     });
   };
@@ -69,7 +69,7 @@ const Dashboard = ({ setIsAuthenticated }) => {
             setIsAuthenticated={setIsAuthenticated}
           />
           <Table
-            employees={employees}
+            orders={orders}
             handleEdit={handleEdit}
             handleDelete={handleDelete}
           />
@@ -77,19 +77,19 @@ const Dashboard = ({ setIsAuthenticated }) => {
       )}
       {isAdding && (
         <Add
-          employees={employees}
-          setEmployees={setEmployees}
+          orders={orders}
+          setOrders={setOrders}
           setIsAdding={setIsAdding}
-          getEmployees={getEmployees}
+          getOrders={getOrders}
         />
       )}
       {isEditing && (
         <Edit
-          employees={employees}
-          selectedEmployee={selectedEmployee}
-          setEmployees={setEmployees}
+          orders={orders}
+          selectedOrder={selectedOrder}
+          setOrders={setOrders}
           setIsEditing={setIsEditing}
-          getEmployees={getEmployees}
+          getOrders={getOrders}
         />
       )}
     </div>

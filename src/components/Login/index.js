@@ -24,7 +24,7 @@ const Login = ({ setIsAuthenticated }) => {
           },
           willClose: () => {
             setIsAuthenticated(true);
-  
+
             Swal.fire({
               icon: 'success',
               title: 'Successfully logged in!',
@@ -51,31 +51,50 @@ const Login = ({ setIsAuthenticated }) => {
         });
       }
     } else if (document.activeElement.name === 'Register') {
-      try {
-        await createUserWithEmailAndPassword(auth, email, password)
-        Swal.fire({
-          timer: 1500,
-          showConfirmButton: false,
-          willOpen: () => {
-            Swal.showLoading();
-          },
-          willClose: () => {
-            setIsAuthenticated(true);
-  
-            Swal.fire({
-              icon: 'success',
-              title: 'Successfully registered and logged in!',
-              showConfirmButton: false,
-              timer: 1500,
-            });
-          },
-        });
-      } catch (error) {
-        console.log(error)
-      }
+      await createUserWithEmailAndPassword(auth, email, password)
+        .then((data) => {
+
+          console.log('data', data);
+
+          Swal.fire({
+            timer: 1500,
+            showConfirmButton: false,
+            willOpen: () => {
+              Swal.showLoading();
+            },
+            willClose: () => {
+              setIsAuthenticated(true);
+
+              Swal.fire({
+                icon: 'success',
+                title: 'Successfully registered and logged in!',
+                showConfirmButton: false,
+                timer: 1500,
+              });
+            },
+          });
+        })
+        .catch(err => {
+          console.log('error', err.code)
+          Swal.fire({
+            timer: 1500,
+            showConfirmButton: false,
+            willOpen: () => {
+              Swal.showLoading();
+            },
+            willClose: () => {
+              Swal.fire({
+                icon: 'error',
+                title: 'Error!',
+                text: err.code,
+                showConfirmButton: true,
+              });
+            },
+          });
+        })
     }
 
-    
+
   };
 
   return (
